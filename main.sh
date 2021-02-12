@@ -60,7 +60,7 @@ function drawMenu()
   local value=$1
   while [[ -n $1 ]]
   do
-    values+=($1)
+    values+=("$1")
     shift
   done
 
@@ -101,14 +101,152 @@ function selectMainMenu()
           ((selected++))
           (( selected > "${#items[@]}" - 1 )) && selected="${#items[@]} - 1"
         ;;
+      'q')
+          clear
+          case $selected in
+          0)
+              selectAddMenu
+            ;;
+          1)
+              selectReplaceMenu
+            ;;
+          2)
+              selectRemoveMenu
+            ;;
+          esac
+        ;;
       *)
         ;;
     esac
-    echo -ne "\e[3A"
+    echo -ne "\e[${#items[@]}A"
+    drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+    read -sr -n 1 char
+  done
+}
+
+# Call syntax: selectAddMenu
+function selectAddMenu()
+{
+  local items=("Yes, add" "No, cancel")
+  local -i foreground=37
+  local -i background=46
+  local -i selected=0
+
+  drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+
+  read -sr -n 1 char
+  while [[ $char != 'e' ]]
+  do
+    case $char in
+      'w')
+          ((selected--))
+          (( selected < 0 )) && selected=0
+        ;;
+      's')
+          ((selected++))
+          (( selected > "${#items[@]}" - 1 )) && selected="${#items[@]} - 1"
+        ;;
+      'q')
+          clear
+          case $selected in
+            0)
+              ;;
+            1)
+                return
+              ;;
+          esac
+        ;;
+      *)
+        ;;
+    esac
+    echo -ne "\e[${#items[@]}A"
+    drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+    read -sr -n 1 char
+  done
+}
+
+# Call syntax: selectReplaceMenu
+function selectReplaceMenu()
+{
+  local items=("Yes, replace" "No, cancel")
+  local -i foreground=37
+  local -i background=46
+  local -i selected=0
+
+  drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+
+  read -sr -n 1 char
+  while [[ $char != 'e' ]]
+  do
+    case $char in
+      'w')
+          ((selected--))
+          (( selected < 0 )) && selected=0
+        ;;
+      's')
+          ((selected++))
+          (( selected > "${#items[@]}" - 1 )) && selected="${#items[@]} - 1"
+        ;;
+      'q')
+          clear
+          case $selected in
+            0)
+              ;;
+            1)
+                return
+              ;;
+          esac
+        ;;
+      *)
+        ;;
+    esac
+    echo -ne "\e[${#items[@]}A"
+    drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+    read -sr -n 1 char
+  done
+}
+
+# Call syntax: selectRemoveMenu
+function selectRemoveMenu()
+{
+  local items=("Yes, remove" "No, cancel")
+  local -i foreground=37
+  local -i background=46
+  local -i selected=0
+
+  drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
+
+  read -sr -n 1 char
+  while [[ $char != 'e' ]]
+  do
+    case $char in
+      'w')
+          ((selected--))
+          (( selected < 0 )) && selected=0
+        ;;
+      's')
+          ((selected++))
+          (( selected > "${#items[@]}" - 1 )) && selected="${#items[@]} - 1"
+        ;;
+      'q')
+          clear
+          case $selected in
+            0)
+              ;;
+            1)
+                return
+              ;;
+          esac
+        ;;
+      *)
+        ;;
+    esac
+    echo -ne "\e[${#items[@]}A"
     drawMenu --selected $selected --foreground $foreground --background $background -- "${items[@]}"
     read -sr -n 1 char
   done
 }
 
 tput civis
+clear
 selectMainMenu
